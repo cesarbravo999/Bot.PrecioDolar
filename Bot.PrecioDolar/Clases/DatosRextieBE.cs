@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bot.PrecioDolar.Clases
 {
-    public class MontoRecibidoBE
+    public class DatosRextieBE
     {
         public string fx_rate_sell { get; set; }
     }

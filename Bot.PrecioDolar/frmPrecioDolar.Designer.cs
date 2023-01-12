@@ -50,11 +50,13 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.lblFechaBloomberg = new System.Windows.Forms.Label();
             this.pnlWeb = new System.Windows.Forms.Panel();
-            this.web = new System.Windows.Forms.WebBrowser();
+            this.panel4 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.btnRefrescar = new System.Windows.Forms.Button();
             this.btnCerrar = new System.Windows.Forms.Button();
             this.chkAuto = new System.Windows.Forms.CheckBox();
+            this.lblVentaTKambio = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.pnlWeb.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -226,23 +228,19 @@
             // 
             // pnlWeb
             // 
-            this.pnlWeb.Controls.Add(this.web);
+            this.pnlWeb.Controls.Add(this.panel4);
             this.pnlWeb.Controls.Add(this.panel3);
             this.pnlWeb.Location = new System.Drawing.Point(0, 96);
             this.pnlWeb.Name = "pnlWeb";
             this.pnlWeb.Size = new System.Drawing.Size(486, 492);
             this.pnlWeb.TabIndex = 16;
             // 
-            // web
+            // panel4
             // 
-            this.web.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.web.Location = new System.Drawing.Point(0, 24);
-            this.web.MinimumSize = new System.Drawing.Size(20, 20);
-            this.web.Name = "web";
-            this.web.ScriptErrorsSuppressed = true;
-            this.web.Size = new System.Drawing.Size(486, 468);
-            this.web.TabIndex = 3;
-            this.web.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.WebBrowser_DocumentCompleted);
+            this.panel4.Location = new System.Drawing.Point(0, 24);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(486, 468);
+            this.panel4.TabIndex = 20;
             // 
             // panel3
             // 
@@ -279,6 +277,8 @@
             // chkAuto
             // 
             this.chkAuto.AutoSize = true;
+            this.chkAuto.Checked = true;
+            this.chkAuto.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAuto.Location = new System.Drawing.Point(127, 75);
             this.chkAuto.Name = "chkAuto";
             this.chkAuto.Size = new System.Drawing.Size(48, 17);
@@ -286,11 +286,31 @@
             this.chkAuto.Text = "Auto";
             this.chkAuto.UseVisualStyleBackColor = true;
             // 
+            // lblVentaTKambio
+            // 
+            this.lblVentaTKambio.AutoSize = true;
+            this.lblVentaTKambio.Location = new System.Drawing.Point(262, 68);
+            this.lblVentaTKambio.Name = "lblVentaTKambio";
+            this.lblVentaTKambio.Size = new System.Drawing.Size(0, 13);
+            this.lblVentaTKambio.TabIndex = 19;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.Location = new System.Drawing.Point(185, 68);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(60, 13);
+            this.label9.TabIndex = 18;
+            this.label9.Text = "TKambio:";
+            // 
             // frmPrecioDolar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(486, 95);
+            this.Controls.Add(this.lblVentaTKambio);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.chkAuto);
             this.Controls.Add(this.pnlWeb);
             this.Controls.Add(this.lblFechaBloomberg);
@@ -347,11 +367,13 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label lblFechaBloomberg;
         private System.Windows.Forms.Panel pnlWeb;
-        private System.Windows.Forms.WebBrowser web;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button btnRefrescar;
         private System.Windows.Forms.Button btnCerrar;
         private System.Windows.Forms.CheckBox chkAuto;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Label lblVentaTKambio;
+        private System.Windows.Forms.Label label9;
     }
 }
 

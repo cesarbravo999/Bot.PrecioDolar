@@ -74,6 +74,7 @@ namespace Bot.PrecioDolar
             tmrActualizacion.Enabled = true;
         }
 
+        WebBrowser web;
         public void WebBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             try
@@ -88,7 +89,13 @@ namespace Bot.PrecioDolar
                         fechaNoActualizacion = DateTime.Now.AddMinutes(5);
                     }
                     else
+                    {
+                        panel4.Controls.Clear();
+                        panel4.Controls.Add(web);
                         this.Height = 627;
+                    }
+                    web.Dispose();
+                    web = null;
                 }
                 else
                 {
@@ -112,6 +119,8 @@ namespace Bot.PrecioDolar
                         lblCierreAyerBloomberg.Text = datoReal.previousClosingPriceOneTradingDayAgo.ToString("0.00000");
                         lblFechaBloomberg.Text = "Actualizado a las " + DateTime.Now.ToString("HH:mm:ss");
                     }
+                    web.Dispose();
+                    web = null;
                 }
             }
             catch (Exception ex)
@@ -130,6 +139,7 @@ namespace Bot.PrecioDolar
                     lblCierreAyerBloomberg.Text = "??";
                 }
             }
+            
         }
 
 
@@ -141,6 +151,11 @@ namespace Bot.PrecioDolar
         }
 
         CookieContainer cookieInvocacion = new CookieContainer();
+        Thread hiloRextie,
+               hiloInstaKash,
+               hiloDollarHouse,
+               hiloTKambio;
+
         private void ActualizarPrecioDolar()
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -157,7 +172,7 @@ namespace Bot.PrecioDolar
                 {
                     menorPrecioDolar = dummyValor;
                 }
-                if (decimal.TryParse(lblVentaInstaKash.Text.Split('(')[0].Trim(), out dummyValor))
+                /*if (decimal.TryParse(lblVentaInstaKash.Text.Split('(')[0].Trim(), out dummyValor))
                 {
                     if (dummyValor < menorPrecioDolar)
                     {
@@ -170,7 +185,7 @@ namespace Bot.PrecioDolar
                     {
                         menorPrecioDolar = dummyValor;
                     }
-                }
+                }*/
 
 
                 if (menorPrecioDolar <= alerta)
@@ -187,7 +202,7 @@ namespace Bot.PrecioDolar
             }
 
             #region Rextie
-            new Thread(new ThreadStart(() =>
+            hiloRextie = new Thread(new ThreadStart(() =>
             {
                 try
                 {
@@ -226,15 +241,17 @@ namespace Bot.PrecioDolar
                 catch (Exception ex)
                 {
                 }
-            })).Start();
+            }));
+            hiloRextie.Start();
             #endregion
 
             #region Instakash
-            new Thread(new ThreadStart(() =>
+            hiloInstaKash = new Thread(new ThreadStart(() =>
             {
                 try
                 {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://x8m7ozhng8.execute-api.us-east-2.amazonaws.com/invoke/exchange-service/api/v1/client/rates");
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.instakash.net/exchange-service/api/v1/client/rates");
+                    request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.121 Safari/535.2";
                     var response = (HttpWebResponse)request.GetResponse();
 
                     List<DatosInstaKashBE> recibido = JsonConvert.DeserializeObject<List<DatosInstaKashBE>>(new StreamReader(response.GetResponseStream()).ReadToEnd());
@@ -252,11 +269,12 @@ namespace Bot.PrecioDolar
                 catch (Exception ex)
                 {
                 }
-            })).Start();
+            }));
+            hiloInstaKash.Start();
             #endregion
 
             #region DollarHouse
-            new Thread(new ThreadStart(() =>
+            hiloDollarHouse = new Thread(new ThreadStart(() =>
             {
                 try
                 {
@@ -279,21 +297,46 @@ namespace Bot.PrecioDolar
                 catch (Exception)
                 {
                 }
-            })).Start();
+            }));
+            hiloDollarHouse.Start();
+            #endregion
+
+            #region TKambio
+            hiloTKambio = new Thread(new ThreadStart(() =>
+            {
+                try
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://tkambio.com/wp-admin/admin-ajax.php?action=get_exchange_rate");
+                    var response = (HttpWebResponse)request.GetResponse();
+
+                    DatosTKambioBE recibido = JsonConvert.DeserializeObject<DatosTKambioBE>(new StreamReader(response.GetResponseStream()).ReadToEnd());
+
+                    if (recibido.selling_rate != null && decimal.Parse(recibido.selling_rate) > 0)
+                        if (lblVentaTKambio.InvokeRequired)
+                        {
+                            lblVentaTKambio.BeginInvoke((MethodInvoker)delegate () { lblVentaTKambio.Text = decimal.Parse(recibido.selling_rate).ToString("0.00000") + " (" + DateTime.Now.ToString("HH:mm:ss") + ")"; });
+                        }
+                        else
+                        {
+                            lblVentaTKambio.Text = decimal.Parse(recibido.selling_rate).ToString("0.00000") + " (" + DateTime.Now.ToString("HH:mm:ss") + ")";
+                        }
+                }
+                catch (Exception ex)
+                {
+                }
+            }));
+            hiloTKambio.Start();
             #endregion
 
             if (this.Height == 134 && (fechaNoActualizacion == null || fechaNoActualizacion.Value < DateTime.Now))
             {
                 fechaNoActualizacion = null;
+                web = new WebBrowser();
+                web.ScriptErrorsSuppressed = true;
+                web.DocumentCompleted += WebBrowser_DocumentCompleted;
+                web.Dock = DockStyle.Fill;
                 web.Navigate("https://www.bloomberg.com/markets2/api/datastrip/PEN%3ACUR%2CUSD%3ACUR%2CINDU%3AIND?locale=en&customTickerList=true");
             }
-
-            /*#region Bloomberg
-            new Thread(new ThreadStart(() =>
-            {
-                
-            })).Start();
-            #endregion*/
         }
 
         private void frmPrecioDolar_Resize(object sender, EventArgs e)

@@ -53,6 +53,7 @@
     <Compile Include="Clases\DatosBloombergBE.cs" />
     <Compile Include="Clases\DatosInstaKashBE.cs" />
     <Compile Include="Clases\DatosRextieBE.cs" />
+    <Compile Include="Clases\DatosTKambioBE.cs" />
     <Compile Include="frmPrecioDolar.cs">
       <SubType>Form</SubType>
     </Compile>
